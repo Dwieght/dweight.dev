@@ -14,6 +14,8 @@ import {
   FileText,
   ImageIcon,
   Download,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { AnimatedText } from "~/components/animated-text";
+import { useTheme } from "@/components/theme-provider";
 
 // Project data
 const projects = [
@@ -117,6 +121,16 @@ const projects = [
       "A versatile survey application that works both online and offline. Features a mobile app for data collection and a web admin interface for survey management, analysis, and reporting.",
     link: "https://play.google.com/store/apps/details?id=com.lemursurvey.app&hl=en",
   },
+  {
+    title: "Oras AI",
+    description:
+      "Oras AI is a smart time tracker that helps teams track, manage, and create projects with ease. Boost productivity with intelligent features your team will actually enjoy using.",
+    image: "/orasaiImage.png",
+    badges: ["Web", "Timetracker", "Tested"],
+    summary:
+      "Track time effortlessly, organize your projects, and make data-driven decisions with Oras AI’s intuitive and team-friendly interface.",
+    link: "https://oras.ai/",
+  },
 ];
 
 // Skills data
@@ -177,7 +191,7 @@ const certificates = [
     title: "Alliance Jumpstart Program",
     type: "Completion",
     description: "Successfully completed for S.Y 2023-2024",
-    image: "/placeholder.svg?height=100&width=200&text=Jumpstart",
+    image: "/placeholder.jpg",
     isPdf: false,
     link: "#",
   },
@@ -361,13 +375,18 @@ const CertificateCard = ({ certificate }: any) => {
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="px-3 sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link href="/" className="font-bold text-xl">
             Dweight Fuentes
@@ -387,7 +406,7 @@ export default function HomePage() {
           </button>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex gap-6">
+          <nav className="hidden md:flex gap-6 items-center">
             {["about", "projects", "skills", "certificates", "contact"].map(
               (item) => (
                 <Link
@@ -399,6 +418,18 @@ export default function HomePage() {
                 </Link>
               )
             )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => toggleTheme()}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
           </nav>
         </div>
 
@@ -418,12 +449,33 @@ export default function HomePage() {
                   </Link>
                 )
               )}
+              <button
+                className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                onClick={() => {
+                  setTheme(theme === "dark" ? "light" : "dark");
+                  toggleMenu();
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  {theme === "dark" ? (
+                    <>
+                      <Sun className="h-5 w-5" />
+                      <span>Light Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-5 w-5" />
+                      <span>Dark Mode</span>
+                    </>
+                  )}
+                </div>
+              </button>
             </nav>
           </div>
         )}
       </header>
 
-      <main className="container py-12 space-y-24">
+      <main className="container py-12 space-y-24 p-3">
         {/* Hero Section */}
         <section
           id="about"
@@ -435,8 +487,14 @@ export default function HomePage() {
               <span className="text-primary">Dweight Dewey Fuentes</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              Full-Stack Developer specializing in building exceptional digital
-              experiences
+              <AnimatedText
+                texts={[
+                  "Full-Stack Developer architecting seamless digital experiences",
+                  "Mobile App Developer engineering intuitive cross-platform solutions",
+                  "Web Developer crafting pixel-perfect, high-performance interfaces",
+                  "QA Specialist delivering flawless software through rigorous testing",
+                ]}
+              />
             </p>
             <p className="text-muted-foreground max-w-prose">
               I&apos;m passionate about creating intuitive and performant web
@@ -455,14 +513,37 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-primary/20">
-            <Image
-              src="/dweightproImage.jpg"
-              alt="Dweight Dewey Fuentes"
-              fill
-              className="object-cover"
-              priority
-            />
+          {/* <div className="relative w-64 h-64 md:w-80 md:h-80 group">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-primary/50 to-primary animate-spin"></div>
+            <div className="absolute inset-[4px] rounded-full bg-background"></div>
+            <div className="absolute inset-[6px] rounded-full overflow-hidden">
+              <Image
+                src="/dweightproImage.jpg"
+                alt="Dweight Dewey Fuentes"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div> */}
+          <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
+            {/* Static container with fixed size */}
+            <div className="w-full h-full rounded-full relative overflow-hidden">
+              {/* Spinning border using transform instead of changing layout */}
+              <div className="absolute inset-[-5%] w-[110%] h-[110%] rounded-full bg-gradient-to-r from-primary via-primary/50 to-primary origin-center animate-[spin_1s_linear_infinite]"></div>
+              {/* Inner background with fixed size */}
+              <div className="absolute inset-[4px] rounded-full bg-background"></div>
+              {/* Image container with fixed size */}
+              <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                <Image
+                  src="/dweightproImage.jpg"
+                  alt="Dweight Dewey Fuentes"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </section>
 
