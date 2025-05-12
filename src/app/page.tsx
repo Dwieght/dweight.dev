@@ -11,6 +11,9 @@ import {
   Mail,
   ExternalLink,
   ChevronRight,
+  FileText,
+  ImageIcon,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,13 +25,344 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+// Project data
+const projects = [
+  {
+    title: "Aicquire",
+    description:
+      "AI-driven applicant tracking system for efficient candidate management",
+    image: "/aicquireImage.png",
+    badges: ["AI", "Web App", "HR Tech", "Tested"],
+    summary:
+      "Efficiently manage candidates, streamline workflows, and unlock your team's full potential with AI-powered hiring tools.",
+    link: "https://aicquire.com/",
+  },
+  {
+    title: "GiGi POS",
+    description: "Intuitive point-of-sale system for businesses",
+    image: "/posImage.png",
+    badges: ["Web", "Mobile", "POS", "Tested"],
+    summary:
+      "A powerful, intuitive point-of-sale system designed to enhance efficiency and improve customer experience.",
+    link: "https://gigipos.com/",
+  },
+  {
+    title: "Zukify",
+    description:
+      "Subscription discount platform connecting users with merchants",
+    image: "/zukifyImage.png",
+    badges: ["Web", "Mobile", "E-commerce", "Tested"],
+    summary:
+      "Revolutionary online community that transforms the traditional landscape of acquiring discounts and perks through a pioneering approach.",
+    link: "https://www.zukify.com/",
+  },
+  {
+    title: "Payruler Learn LMS",
+    description: "Comprehensive learning management system",
+    image: "/lmsImage.png",
+    badges: ["Education", "Web App", "LMS", "Tested"],
+    summary:
+      "Delivers diverse courses, interactive learning, and personalized progress tracking to help students and organizations succeed.",
+    link: "https://lms.tundra.dxform.ph/",
+  },
+  {
+    title: "MAYPLAKA",
+    description: "Vehicle plate number tracking and delivery system",
+    image: "/mayplakaImage.png",
+    badges: ["Web App", "Tracking", "Tested"],
+    summary:
+      "Track your plate number status, set up appointments, or have it delivered to your address when available.",
+    link: "https://www.mayplaka.com/",
+  },
+  {
+    title: "DBM Marketplace",
+    description: "E-commerce online marketplace platform",
+    image: "/dbmImage.png",
+    badges: ["E-commerce", "Next.js", "Marketplace", "Tested"],
+    summary:
+      "A comprehensive e-commerce platform connecting buyers and sellers in an online marketplace environment.",
+    link: "https://dbm-marketplace.vercel.app/",
+  },
+  {
+    title: "Gigi Logistics Platform",
+    description: "Multi-role logistics and delivery platform",
+    image: "",
+    badges: ["Web", "Mobile", "Logistics", "Developed & Tested"],
+    summary:
+      "Full-featured platform supporting on-demand services like express delivery, item purchasing, and food delivery with real-time tracking.",
+    link: "",
+    comingSoon: true,
+  },
+  {
+    title: "Lemur Survey",
+    description:
+      "Comprehensive survey platform with offline and online capabilities",
+    image: "/lemurSurveyImage.png",
+    badges: [
+      "Web Admin",
+      "Mobile App",
+      "Offline Support",
+      "Developed & Tested",
+    ],
+    summary:
+      "A versatile survey application that works both online and offline. Features a mobile app for data collection and a web admin interface for survey management, analysis, and reporting.",
+    link: "https://play.google.com/store/apps/details?id=com.lemursurvey.app&hl=en",
+  },
+];
+
+// Skills data
+const skills = [
+  { name: "React", icon: "/reactIcon.png" },
+  { name: "Next.js", icon: "/nextIcon.png" },
+  { name: "TypeScript", icon: "/typescriptIcon.png" },
+  { name: "Tailwind CSS", icon: "/tailwindIcon.png" },
+  { name: "Node.js", icon: "/nodejsIcon.png" },
+  { name: "MongoDB", icon: "/mongodbIcon.png" },
+  { name: "PostgreSQL", icon: "/postgresqlIcon.png" },
+  { name: "Git", icon: "/gitIcon.png" },
+];
+
+// Certificate data
+const certificates = [
+  {
+    title: "Introduction to Web Security Threats",
+    type: "Webinar Attendance",
+    date: "December 10, 2020",
+    image: "/Web_Security_Threats.pdf",
+    isPdf: true,
+    link: "#",
+  },
+  {
+    title: "9th ICT Congress 2022",
+    type: "Participation",
+    description: "Embracing AI Synergies. Shaping Today's Gen Zs",
+    image: "/Fuentes_Dwieght_2022_ICT_Congress_Certificate_-_Participation.pdf",
+    isPdf: true,
+    link: "#",
+  },
+  {
+    title: "Full-Stack Dev Road Map",
+    type: "Attendance",
+    date: "March 12, 2021",
+    image: "/Full_Stack_Road_Map.pdf",
+    isPdf: true,
+    link: "#",
+  },
+  {
+    title: "How to build a signature service as a designer",
+    type: "Participation",
+    date: "July 1, 2021",
+    image: "/design_hill_certificate.png",
+    isPdf: false,
+    link: "#",
+  },
+  {
+    title: "School of Agility, Grit, & Entrepreneurship",
+    type: "Attendance",
+    date: "December 29, 2020",
+    image: "/school_of_agility.png",
+    isPdf: false,
+    link: "#",
+  },
+  {
+    title: "Alliance Jumpstart Program",
+    type: "Completion",
+    description: "Successfully completed for S.Y 2023-2024",
+    image: "/placeholder.svg?height=100&width=200&text=Jumpstart",
+    isPdf: false,
+    link: "#",
+  },
+];
+
+// Component for project cards
+const ProjectCard = ({ project }: any) => (
+  <Card className="overflow-hidden group">
+    <div className="relative h-48 overflow-hidden bg-slate-100">
+      {project.image ? (
+        <Image
+          src={project.image || "/placeholder.svg"}
+          alt={project.title}
+          fill
+          className="object-cover transition-transform group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h3 className="text-xl font-bold">{project.title}</h3>
+        </div>
+      )}
+    </div>
+    <CardHeader>
+      <CardTitle>{project.title}</CardTitle>
+      <CardDescription>{project.description}</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {project.badges.map((badge: any, index: any) => (
+          <Badge key={index}>{badge}</Badge>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground line-clamp-3">
+        {project.summary}
+      </p>
+    </CardContent>
+    <CardFooter className="flex justify-between">
+      {project.comingSoon ? (
+        <Button variant="outline" size="sm" disabled>
+          <span className="flex items-center">
+            <ExternalLink className="mr-2 h-4 w-4" /> Coming Soon
+          </span>
+        </Button>
+      ) : (
+        <Button size="sm" asChild>
+          <Link
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center"
+          >
+            <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
+          </Link>
+        </Button>
+      )}
+    </CardFooter>
+  </Card>
+);
+
+// Component for skill cards
+const SkillCard = ({ skill }: any) => (
+  <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
+    <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
+      <Image
+        src={skill.icon || "/placeholder.svg"}
+        alt={skill.name}
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    </div>
+    <h3 className="font-medium">{skill.name}</h3>
+  </Card>
+);
+
+// Component for certificate cards
+const CertificateCard = ({ certificate }: any) => {
+  const fileIcon = certificate.isPdf ? (
+    <FileText className="h-6 w-6 text-primary" />
+  ) : (
+    <ImageIcon className="h-6 w-6 text-primary" />
+  );
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Card className="overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
+          <div className="relative h-32 overflow-hidden bg-slate-50">
+            {certificate.isPdf ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-2">
+                  <FileText className="h-12 w-12 text-primary/70" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to view PDF
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <Image
+                src={certificate.image || "/placeholder.svg"}
+                alt={certificate.title}
+                fill
+                className="object-contain p-4"
+              />
+            )}
+          </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{certificate.title}</CardTitle>
+            <CardDescription>
+              <span className="font-medium">
+                Certificate of {certificate.type}
+              </span>
+              {certificate.description && (
+                <div className="mt-1">{certificate.description}</div>
+              )}
+              {certificate.date && (
+                <div className="mt-1">{certificate.date}</div>
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {fileIcon}
+              <span>
+                {certificate.isPdf ? "PDF Document" : "Image Certificate"}
+              </span>
+            </div>
+            <Button variant="ghost" size="sm">
+              View Certificate
+            </Button>
+          </CardFooter>
+        </Card>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl h-auto max-h-[90vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle>{certificate.title}</DialogTitle>
+          <DialogDescription>
+            Certificate of {certificate.type}
+            {certificate.date && ` • ${certificate.date}`}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-4 flex flex-col items-center">
+          {certificate.isPdf ? (
+            <div className="w-full h-[70vh] bg-slate-100 rounded-md overflow-hidden">
+              <iframe
+                src={`${certificate.image}#toolbar=0&navpanes=0`}
+                className="w-full h-full"
+                title={certificate.title}
+              />
+            </div>
+          ) : (
+            <div className="relative w-full max-h-[70vh] flex justify-center">
+              <Image
+                src={certificate.image || "/placeholder.svg"}
+                alt={certificate.title}
+                width={800}
+                height={600}
+                className="object-contain max-h-[70vh]"
+              />
+            </div>
+          )}
+          <div className="flex justify-end w-full mt-4">
+            <Button asChild variant="outline">
+              <Link
+                href={certificate.image}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -54,30 +388,17 @@ export default function HomePage() {
 
           {/* Desktop navigation */}
           <nav className="hidden md:flex gap-6">
-            <Link
-              href="#about"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="#projects"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Projects
-            </Link>
-            <Link
-              href="#skills"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Skills
-            </Link>
-            <Link
-              href="#contact"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Contact
-            </Link>
+            {["about", "projects", "skills", "certificates", "contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  href={`#${item}`}
+                  className="text-sm font-medium hover:text-primary transition-colors capitalize"
+                >
+                  {item}
+                </Link>
+              )
+            )}
           </nav>
         </div>
 
@@ -85,34 +406,18 @@ export default function HomePage() {
         {isMenuOpen && (
           <div className="fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in md:hidden bg-background">
             <nav className="grid gap-6 text-lg">
-              <Link
-                href="#about"
-                className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                onClick={toggleMenu}
-              >
-                About
-              </Link>
-              <Link
-                href="#projects"
-                className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                onClick={toggleMenu}
-              >
-                Projects
-              </Link>
-              <Link
-                href="#skills"
-                className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                onClick={toggleMenu}
-              >
-                Skills
-              </Link>
-              <Link
-                href="#contact"
-                className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                onClick={toggleMenu}
-              >
-                Contact
-              </Link>
+              {["about", "projects", "skills", "certificates", "contact"].map(
+                (item) => (
+                  <Link
+                    key={item}
+                    href={`#${item}`}
+                    className="flex w-full items-center rounded-md py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground capitalize"
+                    onClick={toggleMenu}
+                  >
+                    {item}
+                  </Link>
+                )
+              )}
             </nav>
           </div>
         )}
@@ -172,339 +477,9 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Aicquire */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden bg-purple-100">
-                <Image
-                  src="/aicquireImage.png"
-                  alt="Aicquire"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Aicquire</CardTitle>
-                <CardDescription>
-                  AI-driven applicant tracking system for efficient candidate
-                  management
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>AI</Badge>
-                  <Badge>Web App</Badge>
-                  <Badge>HR Tech</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  Efficiently manage candidates, streamline workflows, and
-                  unlock your team&apos;s full potential with AI-powered hiring
-                  tools.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://aicquire.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* GiGi POS */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/posImage.png"
-                  alt="GiGi POS"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>GiGi POS</CardTitle>
-                <CardDescription>
-                  Intuitive point-of-sale system for businesses
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Web</Badge>
-                  <Badge>Mobile</Badge>
-                  <Badge>POS</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  A powerful, intuitive point-of-sale system designed to enhance
-                  efficiency and improve customer experience.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://gigipos.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* Zukify */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/zukifyImage.png"
-                  alt="Zukify"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Zukify</CardTitle>
-                <CardDescription>
-                  Subscription discount platform connecting users with merchants
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Web</Badge>
-                  <Badge>Mobile</Badge>
-                  <Badge>E-commerce</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  Revolutionary online community that transforms the traditional
-                  landscape of acquiring discounts and perks through a
-                  pioneering approach.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://www.zukify.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* LMS */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/lmsImage.png"
-                  alt="LMS"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Payruler Learn LMS</CardTitle>
-                <CardDescription>
-                  Comprehensive learning management system
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Education</Badge>
-                  <Badge>Web App</Badge>
-                  <Badge>LMS</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  Delivers diverse courses, interactive learning, and
-                  personalized progress tracking to help students and
-                  organizations succeed.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://lms.tundra.dxform.ph/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* MAYPLAKA */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/mayplakaImage.png"
-                  alt="MAYPLAKA"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>MAYPLAKA</CardTitle>
-                <CardDescription>
-                  Vehicle plate number tracking and delivery system
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Web App</Badge>
-                  <Badge>Tracking</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  Track your plate number status, set up appointments, or have
-                  it delivered to your address when available.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://www.mayplaka.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* DBM Marketplace */}
-            <Card className="overflow-hidden group">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/dbmImage.png"
-                  alt="DBM Marketplace"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>DBM Marketplace</CardTitle>
-                <CardDescription>
-                  E-commerce online marketplace platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>E-commerce</Badge>
-                  <Badge>Next.js</Badge>
-                  <Badge>Marketplace</Badge>
-                  <Badge>Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  A comprehensive e-commerce platform connecting buyers and
-                  sellers in an online marketplace environment.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://dbm-marketplace.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* Gigi Logistics Platform */}
-            <Card className="overflow-hidden group bg-gradient-to-br from-slate-50 to-slate-100">
-              <div className="relative h-48 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-xl font-bold">Gigi Logistics Platform</h3>
-                </div>
-              </div>
-              <CardHeader>
-                <CardTitle>Gigi Logistics Platform</CardTitle>
-                <CardDescription>
-                  Multi-role logistics and delivery platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Web</Badge>
-                  <Badge>Mobile</Badge>
-                  <Badge>Logistics</Badge>
-                  <Badge>Developed & Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  Full-featured platform supporting on-demand services like
-                  express delivery, item purchasing, and food delivery with
-                  real-time tracking.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" size="sm" disabled>
-                  <span className="flex items-center">
-                    <ExternalLink className="mr-2 h-4 w-4" /> Coming Soon
-                  </span>
-                </Button>
-              </CardFooter>
-            </Card>
-            {/* Lemur Survey */}
-            <Card className="overflow-hidden group bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700">
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src="/lemurSurveyImage.png"
-                  alt="DBM Marketplace"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Lemur Survey</CardTitle>
-                <CardDescription>
-                  Comprehensive survey platform with offline and online
-                  capabilities
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge>Web Admin</Badge>
-                  <Badge>Mobile App</Badge>
-                  <Badge>Offline Support</Badge>
-                  <Badge>Developed & Tested</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  A versatile survey application that works both online and
-                  offline. Features a mobile app for data collection and a web
-                  admin interface for survey management, analysis, and
-                  reporting.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" asChild>
-                  <Link
-                    href="https://play.google.com/store/apps/details?id=com.lemursurvey.app&hl=en"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
+            {projects.map((project, index) => (
+              <ProjectCard key={index} project={project} />
+            ))}
           </div>
 
           <div className="text-center pt-8">
@@ -526,109 +501,27 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/reactIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">React</h3>
-            </Card>
+            {skills.map((skill, index) => (
+              <SkillCard key={index} skill={skill} />
+            ))}
+          </div>
+        </section>
 
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/nextIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">Next.js</h3>
-            </Card>
+        {/* Certificates Section */}
+        <section id="certificates" className="py-12 space-y-8">
+          <div className="space-y-2 text-center">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Certificates & Credentials
+            </h2>
+            <p className="text-muted-foreground max-w-[600px] mx-auto">
+              Professional certifications and educational achievements
+            </p>
+          </div>
 
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/typescriptIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">TypeScript</h3>
-            </Card>
-
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/tailwindIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">Tailwind CSS</h3>
-            </Card>
-
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/nodejsIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">Node.js</h3>
-            </Card>
-
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/mongodbIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">MongoDB</h3>
-            </Card>
-
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/postgresqlIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">PostgreSQL</h3>
-            </Card>
-
-            <Card className="flex flex-col items-center p-6 hover:border-primary/50 transition-colors">
-              <div className="rounded-full bg-primary/10 p-3 mb-4 relative w-12 h-12 flex items-center justify-center">
-                <Image
-                  src="/gitIcon.png"
-                  alt="React"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium">Git</h3>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {certificates.map((certificate, index) => (
+              <CertificateCard key={index} certificate={certificate} />
+            ))}
           </div>
         </section>
 
@@ -697,7 +590,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-primary" />
                   <Link
-                    href="mailto:dweightfuentes@gmail.com"
+                    href="mailto:dwieghtpro@gmail.com"
                     className="hover:text-primary transition-colors"
                   >
                     dwieghtpro@gmail.com
@@ -742,7 +635,7 @@ export default function HomePage() {
           </div>
           <div className="flex gap-4">
             <Link
-              href="https://github.com/dweightfuentes"
+              href="https://github.com/Dwieght"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
@@ -750,14 +643,14 @@ export default function HomePage() {
               <GitHub className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
             </Link>
             <Link
-              href="https://linkedin.com/in/dweight-fuentes"
+              href="https://www.linkedin.com/in/dwieght-dewey-fuentes-692078200/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
             >
               <Linkedin className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
             </Link>
-            <Link href="mailto:dweightfuentes@gmail.com" aria-label="Email">
+            <Link href="mailto:dwieghtpro@gmail.com" aria-label="Email">
               <Mail className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
             </Link>
           </div>
