@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -80,4 +81,9 @@ export default function DashboardPage() {
             </div>
         </div>
     );
+=======
+
+export default function DashboardPage() {
+  return <div>dashboard page</div>;
+>>>>>>> d42dac0 (initial portfolio)
 }
