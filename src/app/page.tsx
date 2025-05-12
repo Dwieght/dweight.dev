@@ -91,7 +91,7 @@ const projects = [
     title: "DBM Marketplace",
     description: "E-commerce online marketplace platform",
     image: "/dbmImage.png",
-    badges: ["E-commerce", "Next.js", "Marketplace", "Tested"],
+    badges: ["E-commerce", "Marketplace", "Tested"],
     summary:
       "A comprehensive e-commerce platform connecting buyers and sellers in an online marketplace environment.",
     link: "https://dbm-marketplace.vercel.app/",
@@ -680,7 +680,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <Linkedin className="h-5 w-5 text-primary" />
                   <Link
-                    href="linkedin.com/in/dweight-dewey-fuentes-692078200"
+                    href="https://linkedin.com/in/dweight-dewey-fuentes-692078200"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
@@ -706,7 +706,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-6 md:py-8">
+      <footer className="border-t py-6 md:py-8 px-3">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -724,7 +724,7 @@ export default function HomePage() {
               <GitHub className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
             </Link>
             <Link
-              href="https://www.linkedin.com/in/dwieght-dewey-fuentes-692078200/"
+              href="https://linkedin.com/in/dweight-dewey-fuentes-692078200"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
