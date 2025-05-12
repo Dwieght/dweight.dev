@@ -493,10 +493,15 @@ export default function HomePage() {
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="outline" size="sm" disabled>
-                  <span className="flex items-center">
-                    <ExternalLink className="mr-2 h-4 w-4" /> Coming Soon
-                  </span>
+                <Button size="sm" asChild>
+                  <Link
+                    href="https://play.google.com/store/apps/details?id=com.lemursurvey.app&hl=en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" /> Visit Site
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
