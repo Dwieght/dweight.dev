@@ -680,7 +680,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <Linkedin className="h-5 w-5 text-primary" />
                   <Link
-                    href="https://www.linkedin.com/in/dwieght-dewey-fuentes-692078200/"
+                    href="linkedin.com/in/dweight-dewey-fuentes-692078200"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
