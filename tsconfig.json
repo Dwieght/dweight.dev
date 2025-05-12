@@ -19,12 +19,8 @@
       }
     ],
     "paths": {
-<<<<<<< HEAD
-      "~/*": ["./src/*"]
-=======
       "~/*": ["./src/*"],
       "@/*": ["./src/*"]
->>>>>>> d42dac0 (initial portfolio)
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
