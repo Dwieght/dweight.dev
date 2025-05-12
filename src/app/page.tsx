@@ -99,7 +99,7 @@ const projects = [
   {
     title: "Gigi Logistics Platform",
     description: "Multi-role logistics and delivery platform",
-    image: "",
+    image: "/gigiImage.png",
     badges: ["Web", "Mobile", "Logistics", "Developed & Tested"],
     summary:
       "Full-featured platform supporting on-demand services like express delivery, item purchasing, and food delivery with real-time tracking.",
