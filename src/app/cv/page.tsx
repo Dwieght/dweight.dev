@@ -11,6 +11,8 @@ import {
   Mail,
   Linkedin,
   Github,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,11 +20,13 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/components/theme-provider";
 
 export default function CVPage() {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [isPrinting, setIsPrinting] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const cvRef = useRef<HTMLDivElement>(null);
-
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
   const handlePrint = () => {
     setIsPrinting(true);
     setTimeout(() => {
@@ -41,17 +45,91 @@ export default function CVPage() {
       const html2pdf = (await import("html2pdf.js")).default;
 
       const element = cvRef.current;
+
+      // Improved PDF options for better content fitting
       const opt = {
-        margin: 10,
+        margin: [15, 10, 15, 10], // top, right, bottom, left margins in mm
         filename: "dweight-fuentes-cv.pdf",
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          scrollY: 0,
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+          compress: true,
+          hotfixes: ["px_scaling"],
+        },
+        pagebreak: {
+          mode: "avoid-all",
+          before: ".page-break-before",
+          after: ".page-break-after",
+        },
       };
+
+      // Apply temporary PDF generation styles
+      const originalStyles = document.createElement("style");
+      originalStyles.innerHTML = `
+        @media print {
+          .cv-section {
+            page-break-inside: avoid;
+          }
+          .cv-card {
+            break-inside: avoid;
+          }
+          .cv-content {
+            font-size: 11px !important;
+          }
+          .cv-heading {
+            font-size: 14px !important;
+          }
+          .cv-subheading {
+            font-size: 12px !important;
+          }
+          .cv-badge {
+            font-size: 10px !important;
+            padding: 2px 6px !important;
+          }
+        }
+      `;
+      document.head.appendChild(originalStyles);
+
+      // Add PDF generation classes
+      const sections = cvRef.current.querySelectorAll("section");
+      sections.forEach((section) => section.classList.add("cv-section"));
+
+      const cards = cvRef.current.querySelectorAll(".card");
+      cards.forEach((card) => card.classList.add("cv-card"));
+
+      const paragraphs = cvRef.current.querySelectorAll("p");
+      paragraphs.forEach((p) => p.classList.add("cv-content"));
+
+      const headings = cvRef.current.querySelectorAll("h2");
+      headings.forEach((h) => h.classList.add("cv-heading"));
+
+      const subheadings = cvRef.current.querySelectorAll("h3, h4");
+      subheadings.forEach((h) => h.classList.add("cv-subheading"));
+
+      const badges = cvRef.current.querySelectorAll(".badge");
+      badges.forEach((badge) => badge.classList.add("cv-badge"));
 
       await html2pdf().set(opt).from(element).save();
 
-      // Optional: Show success message
+      // Clean up temporary styles
+      document.head.removeChild(originalStyles);
+
+      // Remove temporary classes
+      sections.forEach((section) => section.classList.remove("cv-section"));
+      cards.forEach((card) => card.classList.remove("cv-card"));
+      paragraphs.forEach((p) => p.classList.remove("cv-content"));
+      headings.forEach((h) => h.classList.remove("cv-heading"));
+      subheadings.forEach((h) => h.classList.remove("cv-subheading"));
+      badges.forEach((badge) => badge.classList.remove("cv-badge"));
+
       console.log("PDF generated successfully");
     } catch (error) {
       console.error("PDF generation failed:", error);
@@ -73,7 +151,19 @@ export default function CVPage() {
             </Button>
             <h1 className="font-bold text-xl">Curriculum Vitae</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 me-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => toggleTheme()}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
             <Button
               variant="outline"
               onClick={handlePrint}
@@ -97,7 +187,7 @@ export default function CVPage() {
       <main className="container py-8 max-w-4xl mx-auto print:py-2">
         <div
           ref={cvRef}
-          className={`space-y-8 print:space-y-6 ${
+          className={`space-y-6 print:space-y-4 ${
             isPrinting ? "printing" : ""
           }`}
         >
@@ -167,21 +257,51 @@ export default function CVPage() {
               Technical Skills
             </h2>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">React</Badge>
-              <Badge variant="secondary">Next.js</Badge>
-              <Badge variant="secondary">TypeScript</Badge>
-              <Badge variant="secondary">JavaScript</Badge>
-              <Badge variant="secondary">HTML5</Badge>
-              <Badge variant="secondary">CSS3</Badge>
-              <Badge variant="secondary">Tailwind CSS</Badge>
-              <Badge variant="secondary">Node.js</Badge>
-              <Badge variant="secondary">MongoDB</Badge>
-              <Badge variant="secondary">PostgreSQL</Badge>
-              <Badge variant="secondary">Git</Badge>
-              <Badge variant="secondary">ASP.NET</Badge>
-              <Badge variant="secondary">SQL Server</Badge>
-              <Badge variant="secondary">UI/UX Design</Badge>
-              <Badge variant="secondary">Quality Assurance</Badge>
+              <Badge className="badge" variant="secondary">
+                React
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                Next.js
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                TypeScript
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                JavaScript
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                HTML5
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                CSS3
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                Tailwind CSS
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                Node.js
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                MongoDB
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                PostgreSQL
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                Git
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                ASP.NET
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                SQL Server
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                UI/UX Design
+              </Badge>
+              <Badge className="badge" variant="secondary">
+                Quality Assurance
+              </Badge>
             </div>
           </section>
 
@@ -191,9 +311,9 @@ export default function CVPage() {
               Professional Experience
             </h2>
 
-            <div className="space-y-6">
-              <Card className="border-l-4 border-l-primary">
-                <CardContent className="p-6">
+            <div className="space-y-4">
+              <Card className="card border-l-4 border-l-primary">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">Front-End Developer</h3>
@@ -209,7 +329,7 @@ export default function CVPage() {
                       August 2024 - Present
                     </p>
                   </div>
-                  <ul className="mt-4 space-y-2 list-disc pl-5">
+                  <ul className="mt-4 space-y-1 list-disc pl-5">
                     <li>
                       Tested the Aicquire AI-driven applicant tracking system
                       for efficient candidate management.
@@ -250,8 +370,8 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-primary">
-                <CardContent className="p-6">
+              <Card className="card border-l-4 border-l-primary">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">
@@ -265,7 +385,7 @@ export default function CVPage() {
                       February 2024 - May 2024
                     </p>
                   </div>
-                  <ul className="mt-4 space-y-2 list-disc pl-5">
+                  <ul className="mt-4 space-y-1 list-disc pl-5">
                     <li>
                       Successfully completed 540 hours of intensive software
                       development training.
@@ -280,7 +400,7 @@ export default function CVPage() {
                     </li>
                     <li>
                       Built a Visitor System with the following features:
-                      <ul className="ml-4 mt-2 space-y-1 list-circle">
+                      <ul className="ml-4 mt-1 space-y-0.5 list-circle">
                         <li>
                           User check-in and check-out tracking functionality
                         </li>
@@ -300,8 +420,8 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-primary">
-                <CardContent className="p-6">
+              <Card className="card border-l-4 border-l-primary">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">
@@ -315,7 +435,7 @@ export default function CVPage() {
                       June 2023 - December 2023
                     </p>
                   </div>
-                  <ul className="mt-4 space-y-2 list-disc pl-5">
+                  <ul className="mt-4 space-y-1 list-disc pl-5">
                     <li>
                       Worked with team members to provide operational system
                       support.
@@ -332,8 +452,8 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-primary">
-                <CardContent className="p-6">
+              <Card className="card border-l-4 border-l-primary">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">
@@ -347,7 +467,7 @@ export default function CVPage() {
                       May 2017 - December 2020
                     </p>
                   </div>
-                  <ul className="mt-4 space-y-2 list-disc pl-5">
+                  <ul className="mt-4 space-y-1 list-disc pl-5">
                     <li>
                       Interacted with customers by phone, email, or in-person to
                       provide information.
@@ -373,17 +493,20 @@ export default function CVPage() {
             </div>
           </section>
 
+          {/* Add a page break hint before Key Projects */}
+          <div className="page-break-before"></div>
+
           <section>
             <h2 className="text-xl font-bold border-b pb-2 mb-4">
               Key Projects
             </h2>
             <div className="grid grid-cols-1 gap-4">
-              <Card>
-                <CardContent className="p-6">
+              <Card className="card">
+                <CardContent className="p-4 md:p-6">
                   <h3 className="font-bold text-lg mb-2">
                     Professional Portfolio
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div>
                       <h4 className="font-medium">Aicquire</h4>
                       <p className="text-sm text-muted-foreground">
@@ -470,7 +593,7 @@ export default function CVPage() {
               Certificates & Accomplishments
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
+              <Card className="card">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <FileText className="h-5 w-5 text-primary mt-1" />
@@ -486,7 +609,7 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="card">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <FileText className="h-5 w-5 text-primary mt-1" />
@@ -502,7 +625,7 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="card">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <FileText className="h-5 w-5 text-primary mt-1" />
@@ -516,7 +639,7 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="card">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <FileText className="h-5 w-5 text-primary mt-1" />
@@ -529,7 +652,7 @@ export default function CVPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="card">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <FileText className="h-5 w-5 text-primary mt-1" />
@@ -552,8 +675,8 @@ export default function CVPage() {
           <section>
             <h2 className="text-xl font-bold border-b pb-2 mb-4">Education</h2>
             <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
+              <Card className="card">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">
@@ -570,8 +693,8 @@ export default function CVPage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="p-6">
+              <Card className="card">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                     <div>
                       <h3 className="font-bold text-lg">Senior High School</h3>
@@ -598,6 +721,7 @@ export default function CVPage() {
         @media print {
           @page {
             margin: 0.5cm;
+            size: A4;
           }
           body {
             -webkit-print-color-adjust: exact !important;
