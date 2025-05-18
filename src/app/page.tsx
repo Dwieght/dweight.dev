@@ -551,15 +551,6 @@ export default function HomePage() {
               <Button variant="outline" asChild>
                 <Link href="#projects">View My Work</Link>
               </Button>
-              {/* <Button variant="secondary" asChild>
-                <Link
-                  href="/resume.pdf"
-                  download
-                  className="flex items-center gap-2"
-                >
-                  <FileText className="h-4 w-4" /> Download Resume
-                </Link>
-              </Button> */}
               <Button variant="secondary" asChild>
                 <Link href="/cv" className="flex items-center gap-2">
                   <FileText className="h-4 w-4" /> View CV
