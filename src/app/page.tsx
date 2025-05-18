@@ -794,7 +794,7 @@ export default function HomePage() {
             download
             className="flex items-center gap-2"
           >
-            <FileText className="h-5 w-5" /> Resume
+            <FileText className="h-5 w-5" /> Curriculum Vitae
           </Link>
         </Button>
       </div>
