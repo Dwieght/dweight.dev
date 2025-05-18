@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { AnimatedText } from "~/components/animated-text";
 import { useTheme } from "@/components/theme-provider";
+import { Loader } from "@/components/ui/loader";
 
 // Project data
 const projects = [
@@ -416,6 +417,7 @@ const CertificateCard = ({ certificate }: any) => {
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [isLoadingCV, setIsLoadingCV] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -423,6 +425,15 @@ export default function HomePage() {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const handleCVClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setIsLoadingCV(true);
+
+    setTimeout(() => {
+      setIsLoadingCV(false);
+      window.location.href = "/cv";
+    }, 1000);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Navigation */}
@@ -550,11 +561,6 @@ export default function HomePage() {
               </Button>
               <Button variant="outline" asChild>
                 <Link href="#projects">View My Work</Link>
-              </Button>
-              <Button variant="secondary" asChild>
-                <Link href="/cv" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" /> View CV
-                </Link>
               </Button>
             </div>
           </div>
@@ -734,11 +740,12 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-primary" />
                   <Link
-                    href="/resume.pdf"
+                    href="/cv"
                     download
+                    onClick={handleCVClick}
                     className="hover:text-primary transition-colors flex items-center gap-2"
                   >
-                    Download Resume <Download className="h-4 w-4" />
+                    View CV <Download className="h-4 w-4" />
                   </Link>
                 </div>
               </CardContent>
@@ -781,7 +788,12 @@ export default function HomePage() {
       </footer>
       <div className="fixed bottom-6 right-6 z-50">
         <Button size="lg" className="rounded-full shadow-lg" asChild>
-          <Link href="/resume.pdf" download className="flex items-center gap-2">
+          <Link
+            href="/cv"
+            onClick={handleCVClick}
+            download
+            className="flex items-center gap-2"
+          >
             <FileText className="h-5 w-5" /> Resume
           </Link>
         </Button>

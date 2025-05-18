@@ -37,6 +37,7 @@ export default function CVPage() {
     setIsGeneratingPdf(true);
 
     try {
+      // Dynamically import html2pdf to avoid SSR issues
       const html2pdf = (await import("html2pdf.js")).default;
 
       const element = cvRef.current;
@@ -244,6 +245,56 @@ export default function CVPage() {
                     <li>
                       Tested Oras AI, a smart time tracker that helps teams
                       track, manage, and create projects.
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-primary">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+                    <div>
+                      <h3 className="font-bold text-lg">
+                        Software Development Intern
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Skanlog ELEV Internship Program, Cebu City
+                      </p>
+                    </div>
+                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
+                      February 2024 - May 2024
+                    </p>
+                  </div>
+                  <ul className="mt-4 space-y-2 list-disc pl-5">
+                    <li>
+                      Successfully completed 540 hours of intensive software
+                      development training.
+                    </li>
+                    <li>
+                      Developed a Calendar application for scheduling and
+                      appointment management.
+                    </li>
+                    <li>
+                      Created a Central file system for efficient document
+                      management and sharing.
+                    </li>
+                    <li>
+                      Built a Visitor System with the following features:
+                      <ul className="ml-4 mt-2 space-y-1 list-circle">
+                        <li>
+                          User check-in and check-out tracking functionality
+                        </li>
+                        <li>Schedule management and date organization</li>
+                        <li>
+                          Developed comprehensive test cases for quality
+                          assurance
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      Received recognition for exceptional interest, knowledge,
+                      and dedication towards becoming an efficient IT
+                      Professional.
                     </li>
                   </ul>
                 </CardContent>
