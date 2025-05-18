@@ -699,10 +699,10 @@ export default function CVPage() {
                     <div>
                       <h3 className="font-bold text-lg">Senior High School</h3>
                       <p className="text-muted-foreground">
-                        University of Cebu - Main Campus
+                        Lahug Night High School
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        ICT Strand - Programming
+                        General Academic Strand
                       </p>
                     </div>
                     <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
