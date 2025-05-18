@@ -131,6 +131,36 @@ const projects = [
       "Track time effortlessly, organize your projects, and make data-driven decisions with Oras AI’s intuitive and team-friendly interface.",
     link: "https://oras.ai/",
   },
+  {
+    title: "Visitor System",
+    description: "User check-in/out tracking and scheduling system",
+    image: "/placeholder.svg",
+    badges: ["Web App", "Tracking", "Scheduling", "Developed"],
+    summary:
+      "A comprehensive system for tracking visitor check-ins and check-outs, managing schedules, and generating reports. Developed during internship at Skanlog.",
+    link: "",
+    comingSoon: true,
+  },
+  {
+    title: "Calendar Application",
+    description: "Scheduling and appointment management system",
+    image: "/placeholder.svg",
+    badges: ["Web App", "Scheduling", "Developed"],
+    summary:
+      "An intuitive calendar application for scheduling and managing appointments with notification features. Created during Skanlog ELEV Internship program.",
+    link: "",
+    comingSoon: true,
+  },
+  {
+    title: "Central File System",
+    description: "Centralized document management solution",
+    image: "/placeholder.svg",
+    badges: ["Web App", "File Management", "Developed"],
+    summary:
+      "A centralized file system for efficient document management, sharing, and collaboration. Built as part of the Skanlog internship program.",
+    link: "",
+    comingSoon: true,
+  },
 ];
 
 // Skills data
@@ -191,6 +221,16 @@ const certificates = [
     title: "Alliance Jumpstart Program",
     type: "Completion",
     description: "Successfully completed for S.Y 2023-2024",
+    image: "/placeholder.jpg",
+    isPdf: false,
+    link: "#",
+  },
+  {
+    title: "Skanlog ELEV Internship Program",
+    type: "Completion",
+    description:
+      "Successfully completed 540 hours focusing on software development",
+    date: "February 5, 2024 - May 2, 2024",
     image: "/placeholder.jpg",
     isPdf: false,
     link: "#",
@@ -502,7 +542,7 @@ export default function HomePage() {
               React, Next.js, and modern backend technologies, I build solutions
               that are both beautiful and functional.
             </p>
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
               <Button asChild>
                 <Link href="#contact">
                   Contact Me <ChevronRight className="ml-2 h-4 w-4" />
@@ -511,21 +551,22 @@ export default function HomePage() {
               <Button variant="outline" asChild>
                 <Link href="#projects">View My Work</Link>
               </Button>
+              {/* <Button variant="secondary" asChild>
+                <Link
+                  href="/resume.pdf"
+                  download
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4" /> Download Resume
+                </Link>
+              </Button> */}
+              <Button variant="secondary" asChild>
+                <Link href="/cv" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" /> View CV
+                </Link>
+              </Button>
             </div>
           </div>
-          {/* <div className="relative w-64 h-64 md:w-80 md:h-80 group">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-primary/50 to-primary animate-spin"></div>
-            <div className="absolute inset-[4px] rounded-full bg-background"></div>
-            <div className="absolute inset-[6px] rounded-full overflow-hidden">
-              <Image
-                src="/dweightproImage.jpg"
-                alt="Dweight Dewey Fuentes"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div> */}
           <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
             {/* Static container with fixed size */}
             <div className="w-full h-full rounded-full relative overflow-hidden">
@@ -699,6 +740,16 @@ export default function HomePage() {
                     github.com/Dwieght
                   </Link>
                 </div>
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <Link
+                    href="/resume.pdf"
+                    download
+                    className="hover:text-primary transition-colors flex items-center gap-2"
+                  >
+                    Download Resume <Download className="h-4 w-4" />
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -737,6 +788,13 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button size="lg" className="rounded-full shadow-lg" asChild>
+          <Link href="/resume.pdf" download className="flex items-center gap-2">
+            <FileText className="h-5 w-5" /> Resume
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }
