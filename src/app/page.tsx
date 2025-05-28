@@ -938,7 +938,7 @@ export default function HomePage() {
         )}
       </header>
 
-      <main className="container relative z-10 p-5">
+      <main className="container relative z-10 px-24">
         <section ref={heroRef} id="about" className="py-12 md:py-24 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
