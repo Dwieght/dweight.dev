@@ -13,6 +13,16 @@ import {
   Github,
   Sun,
   Moon,
+  MapPin,
+  Calendar,
+  Star,
+  Award,
+  Code,
+  Briefcase,
+  GraduationCap,
+  Zap,
+  Eye,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,10 +33,13 @@ export default function CVPage() {
   const { theme, setTheme } = useTheme();
   const [isPrinting, setIsPrinting] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [activeSection, setActiveSection] = useState("summary");
   const cvRef = useRef<HTMLDivElement>(null);
+
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
+
   const handlePrint = () => {
     setIsPrinting(true);
     setTimeout(() => {
@@ -37,18 +50,14 @@ export default function CVPage() {
 
   const generatePdf = async () => {
     if (!cvRef.current) return;
-
     setIsGeneratingPdf(true);
 
     try {
-      // Dynamically import html2pdf to avoid SSR issues
       const html2pdf = (await import("html2pdf.js")).default;
-
       const element = cvRef.current;
 
-      // Improved PDF options for better content fitting
       const opt = {
-        margin: [15, 10, 15, 10], // top, right, bottom, left margins in mm
+        margin: [10, 8, 10, 8],
         filename: "dweight-fuentes-cv.pdf",
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
@@ -62,75 +71,14 @@ export default function CVPage() {
           format: "a4",
           orientation: "portrait",
           compress: true,
-          hotfixes: ["px_scaling"],
         },
         pagebreak: {
           mode: "avoid-all",
           before: ".page-break-before",
-          after: ".page-break-after",
         },
       };
 
-      // Apply temporary PDF generation styles
-      const originalStyles = document.createElement("style");
-      originalStyles.innerHTML = `
-        @media print {
-          .cv-section {
-            page-break-inside: avoid;
-          }
-          .cv-card {
-            break-inside: avoid;
-          }
-          .cv-content {
-            font-size: 11px !important;
-          }
-          .cv-heading {
-            font-size: 14px !important;
-          }
-          .cv-subheading {
-            font-size: 12px !important;
-          }
-          .cv-badge {
-            font-size: 10px !important;
-            padding: 2px 6px !important;
-          }
-        }
-      `;
-      document.head.appendChild(originalStyles);
-
-      // Add PDF generation classes
-      const sections = cvRef.current.querySelectorAll("section");
-      sections.forEach((section) => section.classList.add("cv-section"));
-
-      const cards = cvRef.current.querySelectorAll(".card");
-      cards.forEach((card) => card.classList.add("cv-card"));
-
-      const paragraphs = cvRef.current.querySelectorAll("p");
-      paragraphs.forEach((p) => p.classList.add("cv-content"));
-
-      const headings = cvRef.current.querySelectorAll("h2");
-      headings.forEach((h) => h.classList.add("cv-heading"));
-
-      const subheadings = cvRef.current.querySelectorAll("h3, h4");
-      subheadings.forEach((h) => h.classList.add("cv-subheading"));
-
-      const badges = cvRef.current.querySelectorAll(".badge");
-      badges.forEach((badge) => badge.classList.add("cv-badge"));
-
       await html2pdf().set(opt).from(element).save();
-
-      // Clean up temporary styles
-      document.head.removeChild(originalStyles);
-
-      // Remove temporary classes
-      sections.forEach((section) => section.classList.remove("cv-section"));
-      cards.forEach((card) => card.classList.remove("cv-card"));
-      paragraphs.forEach((p) => p.classList.remove("cv-content"));
-      headings.forEach((h) => h.classList.remove("cv-heading"));
-      subheadings.forEach((h) => h.classList.remove("cv-subheading"));
-      badges.forEach((badge) => badge.classList.remove("cv-badge"));
-
-      console.log("PDF generated successfully");
     } catch (error) {
       console.error("PDF generation failed:", error);
     } finally {
@@ -138,25 +86,84 @@ export default function CVPage() {
     }
   };
 
+  const skillCategories = {
+    frontend: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "Tailwind CSS",
+    ],
+    backend: ["Node.js", "ASP.NET", "MongoDB", "PostgreSQL", "SQL Server"],
+    tools: ["Git", "UI/UX Design", "Quality Assurance"],
+  };
+
+  const navigationItems = [
+    { id: "summary", label: "Summary", icon: Eye },
+    { id: "experience", label: "Experience", icon: Briefcase },
+    { id: "skills", label: "Skills", icon: Code },
+    { id: "projects", label: "Projects", icon: Zap },
+    { id: "education", label: "Education", icon: GraduationCap },
+    { id: "certificates", label: "Certificates", icon: Award },
+  ];
+
   return (
-    <div className="min-h-screen bg-background print:bg-white">
-      {/* Navigation - hidden when printing */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" asChild>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 print:bg-white">
+      {/* Floating Navigation */}
+      <nav className="fixed top-20 right-6 z-50 print:hidden">
+        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-xl p-2">
+          <div className="flex flex-col gap-1">
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveSection(item.id);
+                    document
+                      .getElementById(item.id)
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className={`p-3 rounded-xl transition-all duration-200 group relative ${
+                    activeSection === item.id
+                      ? "bg-blue-500 text-white shadow-lg"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <div className="absolute right-full ml-3 px-2 py-1 bg-slate-900 dark:bg-slate-700 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    {item.label}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
+      {/* Header with Actions */}
+      <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 print:hidden">
+        <div className="container flex h-16 items-center justify-between max-w-6xl mx-auto">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" asChild className="rounded-xl">
               <Link href="/" aria-label="Back to home">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <h1 className="font-bold text-xl">Curriculum Vitae</h1>
+            <div>
+              <h1 className="font-bold text-lg">Curriculum Vitae</h1>
+              <p className="text-xs text-slate-500">Interactive Resume</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 me-4">
+
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => toggleTheme()}
-              aria-label="Toggle theme"
+              onClick={toggleTheme}
+              className="rounded-xl"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -167,419 +174,425 @@ export default function CVPage() {
             <Button
               variant="outline"
               onClick={handlePrint}
-              className="flex items-center gap-2"
+              className="rounded-xl border-slate-200 dark:border-slate-700"
             >
-              <Printer className="h-4 w-4" /> Print
+              <Printer className="h-4 w-4 mr-2" /> Print
             </Button>
             <Button
               onClick={generatePdf}
               disabled={isGeneratingPdf}
-              className="flex items-center gap-2"
+              className="rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 mr-2" />
               {isGeneratingPdf ? "Generating..." : "Download PDF"}
             </Button>
           </div>
         </div>
       </header>
 
-      {/* CV Content */}
-      <main className="container py-8 max-w-4xl mx-auto print:py-2">
-        <div
-          ref={cvRef}
-          className={`space-y-6 print:space-y-4 ${
-            isPrinting ? "printing" : ""
-          }`}
-        >
-          {/* Header */}
-          <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 print:border-gray-200">
-              <Image
-                src="/dweightproImage.jpg"
-                alt="Dweight Dewey Fuentes"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold">Dweight Dewey Fuentes</h1>
-              <p className="text-xl text-muted-foreground mt-1">
-                Front-End Web Developer
-              </p>
+      {/* Main Content */}
+      <main className="container py-8 max-w-6xl mx-auto print:py-4 pl-24 print:pl-0">
+        <div ref={cvRef} className="space-y-8 print:space-y-6">
+          {/* Hero Section */}
+          <section className="relative">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white shadow-2xl print:bg-slate-800">
+              <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
+                <div className="relative">
+                  <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white/30 shadow-xl">
+                    <Image
+                      src="/dweightproImage.jpg"
+                      alt="Dweight Dewey Fuentes"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2">
+                    <div className="w-4 h-4 bg-white rounded-full"></div>
+                  </div>
+                </div>
 
-              <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
-                <Link
-                  href="mailto:dwieghtpro@gmail.com"
-                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
-                >
-                  <Mail className="h-4 w-4" /> dwieghtpro@gmail.com
-                </Link>
-                <Link
-                  href="https://linkedin.com/in/dweight-dewey-fuentes-692078200"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
-                >
-                  <Linkedin className="h-4 w-4" />{" "}
-                  linkedin.com/in/dweight-dewey-fuentes
-                </Link>
-                <Link
-                  href="https://github.com/Dwieght"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
-                >
-                  <Github className="h-4 w-4" /> github.com/Dwieght
-                </Link>
+                <div className="flex-1 text-center lg:text-left">
+                  <h1 className="text-4xl lg:text-5xl font-bold mb-2">
+                    Dweight Dewey Fuentes
+                  </h1>
+                  <p className="text-xl lg:text-2xl text-blue-100 mb-4">
+                    Front-End Web Developer
+                  </p>
+                  <p className="text-blue-100 mb-6 max-w-2xl">
+                    Passionate developer crafting exceptional digital
+                    experiences with modern web technologies. Turning ideas into
+                    elegant, user-friendly solutions.
+                  </p>
+
+                  <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+                    <Link
+                      href="mailto:dwieghtpro@gmail.com"
+                      className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all"
+                    >
+                      <Mail className="h-4 w-4" />
+                      <span className="text-sm">dwieghtpro@gmail.com</span>
+                    </Link>
+                    <Link
+                      href="https://linkedin.com/in/dweight-dewey-fuentes-692078200"
+                      target="_blank"
+                      className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                      <span className="text-sm">LinkedIn</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                    <Link
+                      href="https://github.com/Dwieght"
+                      target="_blank"
+                      className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all"
+                    >
+                      <Github className="h-4 w-4" />
+                      <span className="text-sm">GitHub</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </section>
 
           {/* Professional Summary */}
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">
-              Professional Summary
-            </h2>
-            <p className="text-muted-foreground">
-              Hardworking and passionate job seeker with strong organizational
-              skills eager to secure entry-level Front-End Web Developer
-              position. Ready to help team achieve company goals. Experienced
-              working with teams to produce impactful, leading-edge websites
-              that engage customers and deliver business results. Well-versed in
-              design standards and user preferences.
-            </p>
+          <section id="summary">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                <Eye className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h2 className="text-2xl font-bold">Professional Summary</h2>
+            </div>
+
+            <Card className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl">
+              <CardContent className="p-8">
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                  Hardworking and passionate front-end developer with strong
+                  organizational skills and a keen eye for detail. Experienced
+                  in building impactful, modern websites that engage users and
+                  deliver exceptional business results. Well-versed in current
+                  design standards, user experience principles, and cutting-edge
+                  web technologies.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                      1+
+                    </div>
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                      Years Experience
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                      15+
+                    </div>
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                      Projects Completed
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                      10+
+                    </div>
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                      Technologies
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </section>
 
           {/* Skills */}
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">
-              Technical Skills
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              <Badge className="badge" variant="secondary">
-                React
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                Next.js
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                TypeScript
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                JavaScript
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                HTML5
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                CSS3
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                Tailwind CSS
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                Node.js
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                MongoDB
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                PostgreSQL
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                Git
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                ASP.NET
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                SQL Server
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                UI/UX Design
-              </Badge>
-              <Badge className="badge" variant="secondary">
-                Quality Assurance
-              </Badge>
+          <section id="skills">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                <Code className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h2 className="text-2xl font-bold">Technical Skills</h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {Object.entries(skillCategories).map(([category, skills]) => (
+                <Card
+                  key={category}
+                  className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl"
+                >
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-4 capitalize flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          category === "frontend"
+                            ? "bg-blue-500"
+                            : category === "backend"
+                            ? "bg-green-500"
+                            : "bg-orange-500"
+                        }`}
+                      ></div>
+                      {category === "frontend"
+                        ? "Frontend"
+                        : category === "backend"
+                        ? "Backend"
+                        : "Tools & Others"}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((skill) => (
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="rounded-full px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
 
           {/* Professional Experience */}
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">
-              Professional Experience
-            </h2>
+          <section id="experience">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                <Briefcase className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <h2 className="text-2xl font-bold">Professional Experience</h2>
+            </div>
 
-            <div className="space-y-4">
-              <Card className="card border-l-4 border-l-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+            <div className="space-y-6">
+              {/* Current Role */}
+              <Card className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl overflow-hidden">
+                <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                <CardContent className="p-8">
+                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 mb-6">
                     <div>
-                      <h3 className="font-bold text-lg">Front-End Developer</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-xl font-bold">Front-End Developer</h3>
+                      <p className="text-blue-600 dark:text-blue-400 font-medium">
                         DXform Ph, Cebu City
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        1402B The Meridian, Golam Drive, Kasambagan, Cebu City
-                        Philippines 6000
-                      </p>
+                      <div className="flex items-center gap-2 mt-1 text-sm text-slate-600 dark:text-slate-400">
+                        <MapPin className="h-4 w-4" />
+                        <span>1402B The Meridian, Golam Drive, Kasambagan</span>
+                      </div>
                     </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      August 2024 - Present
-                    </p>
+                    <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-4 py-2 rounded-full">
+                      <Calendar className="h-4 w-4" />
+                      <span className="text-sm font-medium">
+                        August 2024 - Present
+                      </span>
+                    </div>
                   </div>
-                  <ul className="mt-4 space-y-1 list-disc pl-5">
-                    <li>
-                      Tested the Aicquire AI-driven applicant tracking system
-                      for efficient candidate management.
-                    </li>
-                    <li>
-                      Built GiGi POS, an intuitive point-of-sale system for
-                      businesses with web and mobile interfaces.
-                    </li>
-                    <li>
-                      Tested Zukify, a subscription discount platform connecting
-                      users with merchants.
-                    </li>
-                    <li>
-                      Tested Payruler Learn LMS, a comprehensive learning
-                      management system.
-                    </li>
-                    <li>
-                      Tested MAYPLAKA, a vehicle plate number tracking and
-                      delivery system.
-                    </li>
-                    <li>
-                      Tested DBM Marketplace, an e-commerce online marketplace
-                      platform.
-                    </li>
-                    <li>
-                      Contributed to Gigi Logistics Platform, a multi-role
-                      logistics and delivery platform.
-                    </li>
-                    <li>
-                      Developed and Tested Lemur Survey, a comprehensive survey
-                      platform with offline and online capabilities.
-                    </li>
-                    <li>
-                      Tested Oras AI, a smart time tracker that helps teams
-                      track, manage, and create projects.
-                    </li>
-                  </ul>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {[
+                      "Tested Aicquire AI-driven applicant tracking system",
+                      "Built GiGi POS point-of-sale system with web/mobile interfaces",
+                      "Tested Zukify subscription discount platform",
+                      "Tested Payruler Learn comprehensive LMS",
+                      "Tested MAYPLAKA vehicle tracking system",
+                      "Tested DBM Marketplace e-commerce platform",
+                      "Contributed to Gigi Logistics Platform",
+                      "Developed and tested Lemur Survey platform",
+                      "Tested Oras AI smart time tracker",
+                    ].map((achievement, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <p className="text-slate-700 dark:text-slate-300">
+                          {achievement}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-              <Card className="card border-l-4 border-l-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        Software Development Intern
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Skanlog ELEV Internship Program, Cebu City
-                      </p>
+              {/* Other Experiences */}
+              {[
+                {
+                  title: "Software Development Intern",
+                  company: "Skanlog ELEV Internship Program, Cebu City",
+                  period: "February 2024 - May 2024",
+                  achievements: [
+                    "Completed 540 hours of intensive software development training",
+                    "Developed Calendar application for scheduling management",
+                    "Created Central file system for document management",
+                    "Built comprehensive Visitor System with check-in/out tracking",
+                    "Received recognition for exceptional dedication and knowledge",
+                  ],
+                },
+                {
+                  title: "Alliance Jumpstart Program",
+                  company: "Alliance Software Inc, Cebu City",
+                  period: "June 2023 - December 2023",
+                  achievements: [
+                    "Provided operational system support with team members",
+                    "Established priorities and monitored team performance",
+                    "Developed applications using ASP.NET, JavaScript, and SQL Server",
+                  ],
+                },
+                {
+                  title: "Quality Assurance Intern",
+                  company: "DepEd Regional Office VII, Cebu City",
+                  period: "May 2017 - December 2020",
+                  achievements: [
+                    "Interacted with customers via multiple communication channels",
+                    "Analyzed problems and developed solutions with teams",
+                    "Organized files, spreadsheets, and reports systematically",
+                    "Performed root cause analysis for quality issues",
+                  ],
+                },
+              ].map((job, index) => (
+                <Card
+                  key={index}
+                  className="border-0 shadow-lg bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-3 mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold">{job.title}</h3>
+                        <p className="text-slate-600 dark:text-slate-400">
+                          {job.company}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
+                        <Calendar className="h-3 w-3" />
+                        <span className="text-xs">{job.period}</span>
+                      </div>
                     </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      February 2024 - May 2024
-                    </p>
-                  </div>
-                  <ul className="mt-4 space-y-1 list-disc pl-5">
-                    <li>
-                      Successfully completed 540 hours of intensive software
-                      development training.
-                    </li>
-                    <li>
-                      Developed a Calendar application for scheduling and
-                      appointment management.
-                    </li>
-                    <li>
-                      Created a Central file system for efficient document
-                      management and sharing.
-                    </li>
-                    <li>
-                      Built a Visitor System with the following features:
-                      <ul className="ml-4 mt-1 space-y-0.5 list-circle">
-                        <li>
-                          User check-in and check-out tracking functionality
-                        </li>
-                        <li>Schedule management and date organization</li>
-                        <li>
-                          Developed comprehensive test cases for quality
-                          assurance
-                        </li>
-                      </ul>
-                    </li>
-                    <li>
-                      Received recognition for exceptional interest, knowledge,
-                      and dedication towards becoming an efficient IT
-                      Professional.
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="card border-l-4 border-l-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        Alliance Jumpstart Program
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Alliance Software Inc, Cebu City
-                      </p>
+                    <div className="space-y-2">
+                      {job.achievements.map((achievement, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-sm text-slate-700 dark:text-slate-300">
+                            {achievement}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      June 2023 - December 2023
-                    </p>
-                  </div>
-                  <ul className="mt-4 space-y-1 list-disc pl-5">
-                    <li>
-                      Worked with team members to provide operational system
-                      support.
-                    </li>
-                    <li>
-                      Established team priorities, maintained schedules and
-                      monitored performance.
-                    </li>
-                    <li>
-                      Used ASP.NET, JavaScript and SQL Server to develop new
-                      applications.
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="card border-l-4 border-l-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        Quality Assurance Intern
-                      </h3>
-                      <p className="text-muted-foreground">
-                        DepEd Regional Office VII, Cebu City
-                      </p>
-                    </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      May 2017 - December 2020
-                    </p>
-                  </div>
-                  <ul className="mt-4 space-y-1 list-disc pl-5">
-                    <li>
-                      Interacted with customers by phone, email, or in-person to
-                      provide information.
-                    </li>
-                    <li>
-                      Analyzed problems and worked with teams to develop
-                      solutions.
-                    </li>
-                    <li>
-                      Sorted and organized files, spreadsheets, and reports.
-                    </li>
-                    <li>
-                      Performed root cause analysis to identify and resolve
-                      quality issues and defects.
-                    </li>
-                    <li>
-                      Established and tracked quality department goals and
-                      objectives.
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
 
-          {/* Add a page break hint before Key Projects */}
           <div className="page-break-before"></div>
 
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">
-              Key Projects
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              <Card className="card">
-                <CardContent className="p-4 md:p-6">
-                  <h3 className="font-bold text-lg mb-2">
-                    Professional Portfolio
-                  </h3>
-                  <div className="space-y-2">
-                    <div>
-                      <h4 className="font-medium">Aicquire</h4>
-                      <p className="text-sm text-muted-foreground">
-                        AI-driven applicant tracking system for efficient
-                        candidate management. Efficiently manage candidates,
-                        streamline workflows, and unlock your team&apos;s full
-                        potential with AI-powered hiring tools.
-                      </p>
-                    </div>
+          {/* Key Projects */}
+          <section id="projects">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                <Zap className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h2 className="text-2xl font-bold">Key Projects</h2>
+            </div>
 
-                    <div>
-                      <h4 className="font-medium">GiGi POS</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Intuitive point-of-sale system for businesses. A
-                        powerful, intuitive point-of-sale system designed to
-                        enhance efficiency and improve customer experience.
-                      </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {[
+                {
+                  name: "Aicquire",
+                  desc: "AI-driven applicant tracking system for efficient candidate management with advanced hiring tools.",
+                },
+                {
+                  name: "GiGi POS",
+                  desc: "Intuitive point-of-sale system designed to enhance business efficiency and customer experience.",
+                },
+                {
+                  name: "Zukify",
+                  desc: "Revolutionary subscription discount platform connecting users with merchants and exclusive perks.",
+                },
+                {
+                  name: "Payruler Learn LMS",
+                  desc: "Comprehensive learning management system with interactive courses and progress tracking.",
+                },
+                {
+                  name: "Mayplaka",
+                  desc: "Vehicle plate number tracking and delivery system with appointment scheduling.",
+                },
+                {
+                  name: "Calendar Application",
+                  desc: "Scheduling and appointment management system with intuitive interface and notifications.",
+                },
+                {
+                  name: "Visitor System",
+                  desc: "Check-in/out tracking system with schedule management and comprehensive testing.",
+                },
+                {
+                  name: "Central File System",
+                  desc: "Centralized document management solution for efficient organization and collaboration.",
+                },
+              ].map((project, index) => (
+                <Card
+                  key={index}
+                  className="border-0 shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl hover:shadow-xl transition-all duration-300 group"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-bold text-lg group-hover:text-blue-600 transition-colors">
+                        {project.name}
+                      </h3>
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        <Star className="h-4 w-4 text-white" />
+                      </div>
                     </div>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                      {project.desc}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-                    <div>
-                      <h4 className="font-medium">Zukify</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Subscription discount platform connecting users with
-                        merchants. Revolutionary online community that
-                        transforms the traditional landscape of acquiring
-                        discounts and perks.
-                      </p>
-                    </div>
+          {/* Education */}
+          <section id="education">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
+                <GraduationCap className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <h2 className="text-2xl font-bold">Education</h2>
+            </div>
 
+            <div className="space-y-4">
+              <Card className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl">
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
                     <div>
-                      <h4 className="font-medium">Payruler Learn LMS</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Comprehensive learning management system that delivers
-                        diverse courses, interactive learning, and personalized
-                        progress tracking.
+                      <h3 className="text-lg font-bold">
+                        Bachelor of Science in Information Technology
+                      </h3>
+                      <p className="text-indigo-600 dark:text-indigo-400 font-medium">
+                        University of Cebu
                       </p>
                     </div>
+                    <div className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-4 py-2 rounded-full">
+                      <span className="text-sm font-medium">
+                        Graduated 2023
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
+              <Card className="border-0 shadow-lg bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl">
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
                     <div>
-                      <h4 className="font-medium">Mayplaka</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Vehicle plate number tracking and delivery system. Track
-                        your plate number status, set up appointments, or have
-                        it delivered to your address when available.
+                      <h3 className="text-lg font-bold">Senior High School</h3>
+                      <p className="text-slate-600 dark:text-slate-400">
+                        Lahug Night High School
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        General Academic Strand
                       </p>
                     </div>
-
-                    <div>
-                      <h4 className="font-medium">
-                        Calendar Application (Skanlog)
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        Scheduling and appointment management system with
-                        intuitive interface and notification features.
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Visitor System (Skanlog)</h4>
-                      <p className="text-sm text-muted-foreground">
-                        User check-in/out tracking and scheduling system.
-                        Created and managed data for users who time in and out,
-                        with schedule management functionality and comprehensive
-                        test cases.
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium">
-                        Central File System (Skanlog)
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        Centralized document management solution for efficient
-                        file organization, sharing, and collaboration.
-                      </p>
+                    <div className="bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-full">
+                      <span className="text-sm">Graduated 2017</span>
                     </div>
                   </div>
                 </CardContent>
@@ -588,129 +601,58 @@ export default function CVPage() {
           </section>
 
           {/* Certificates */}
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">
-              Certificates & Accomplishments
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="card">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="h-5 w-5 text-primary mt-1" />
-                    <div>
-                      <h3 className="font-medium">
-                        Alliance Jumpstart Program
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Successfully completed for S.Y 2023-2024
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="h-5 w-5 text-primary mt-1" />
-                    <div>
-                      <h3 className="font-medium">
-                        Introduction to Web Security Threats
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Webinar Attendance - December 10, 2020
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="h-5 w-5 text-primary mt-1" />
-                    <div>
-                      <h3 className="font-medium">9th ICT Congress 2022</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Embracing AI Synergies. Shaping Today&apos;s Gen Zs
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="h-5 w-5 text-primary mt-1" />
-                    <div>
-                      <h3 className="font-medium">Full-Stack Dev Road Map</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Attendance - March 12, 2021
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="card">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="h-5 w-5 text-primary mt-1" />
-                    <div>
-                      <h3 className="font-medium">
-                        SKANLOG ELEV Internship program
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        focusing on software development. Commended from
-                        February 5, 2024 to May 02, 2024
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <section id="certificates">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
+                <Award className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              </div>
+              <h2 className="text-2xl font-bold">
+                Certificates & Accomplishments
+              </h2>
             </div>
-          </section>
 
-          {/* Education */}
-          <section>
-            <h2 className="text-xl font-bold border-b pb-2 mb-4">Education</h2>
-            <div className="space-y-4">
-              <Card className="card">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        Bachelor of Science in Information Technology
-                      </h3>
-                      <p className="text-muted-foreground">
-                        University of Cebu
-                      </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  title: "Alliance Jumpstart Program",
+                  desc: "Successfully completed for S.Y 2023-2024",
+                },
+                {
+                  title: "Introduction to Web Security Threats",
+                  desc: "Webinar Attendance - December 10, 2020",
+                },
+                {
+                  title: "9th ICT Congress 2022",
+                  desc: "Embracing AI Synergies. Shaping Today's Gen Zs",
+                },
+                {
+                  title: "Full-Stack Dev Road Map",
+                  desc: "Attendance - March 12, 2021",
+                },
+                {
+                  title: "SKANLOG ELEV Internship program",
+                  desc: "Software development focus. Commended February 5 - May 02, 2024",
+                },
+              ].map((cert, index) => (
+                <Card
+                  key={index}
+                  className="border-0 shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl hover:shadow-xl transition-all duration-300"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <FileText className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">{cert.title}</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          {cert.desc}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      Graduated 2023
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg">Senior High School</h3>
-                      <p className="text-muted-foreground">
-                        Lahug Night High School
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        General Academic Strand
-                      </p>
-                    </div>
-                    <p className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
-                      Graduated 2017
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
         </div>
@@ -729,6 +671,12 @@ export default function CVPage() {
           }
           .print\\:hidden {
             display: none !important;
+          }
+          .print\\:bg-white {
+            background: white !important;
+          }
+          .print\\:bg-slate-800 {
+            background: #1e293b !important;
           }
         }
       `}</style>
