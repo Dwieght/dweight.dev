@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\"",
+    "dev": "node scripts/start-dev.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.34",
     "@prisma/client": "^5.4.1",
+    "@radix-ui/react-avatar": "^1.1.9",
     "@radix-ui/react-dialog": "^1.1.13",
+    "@radix-ui/react-dropdown-menu": "^2.1.14",
     "@radix-ui/react-slot": "^1.2.2",
     "@tanstack/react-query": "^4.36.1",
     "@trpc/client": "^10.40.0",
@@ -25,22 +30,30 @@
     "radix-ui": "^1.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "@react-three/drei": "^9.95.3",
+    "@react-three/fiber": "^8.15.19",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.160.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/three": "^0.160.0",
     "autoprefixer": "^10",
     "concurrently": "^9.1.2",
     "eslint": "^8",
     "eslint-config-next": "13.5.4",
+    "jsdom": "^26.1.0",
     "postcss": "^8",
     "prisma": "^5.4.1",
     "tailwindcss": "^3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }

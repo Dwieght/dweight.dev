@@ -1,10 +1,11 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "~/components/theme-provider";
+
 export const metadata: Metadata = {
-  title: "Dweight | Portfolio",
-  description: "Personal Portfolio",
+  title: "Dweight Fuentes | Portfolio",
+  description:
+    "Mid-level full-stack engineer shipping production systems across hiring, commerce, and operational software.",
 };
 
 export default function RootLayout({
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider defaultTheme="light">{children}</ThemeProvider>
       </body>
     </html>
   );
