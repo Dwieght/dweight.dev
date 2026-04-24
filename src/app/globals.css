@@ -230,15 +230,6 @@
     box-shadow: var(--shadow-soft);
   }
 
-  .artifact-frame {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in oklch, var(--paper) 78%, white 22%),
-        color-mix(in oklch, var(--paper-soft) 90%, var(--teal) 10%)
-      );
-  }
-
   .note-block {
     border-top: 1px solid var(--line);
     padding-top: 1rem;
@@ -335,15 +326,6 @@ button:focus-visible,
 a:focus-visible {
   outline: 2px solid color-mix(in oklch, var(--accent) 78%, white 22%);
   outline-offset: 3px;
-}
-
-[data-gesture-hovered="true"] {
-  outline: 2px solid color-mix(in oklch, var(--accent) 76%, white 24%);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 8px color-mix(in oklch, var(--accent) 16%, transparent);
-  transition:
-    outline-color 150ms var(--ease-out-quart),
-    box-shadow 150ms var(--ease-out-quart);
 }
 
 @media (max-width: 767px) {

@@ -32,10 +32,6 @@ vi.mock("next/image", () => ({
   ),
 }));
 
-vi.mock("@/components/portfolio/hero-artifact", () => ({
-  HeroArtifact: () => <div aria-label="Interactive 3D scene">3D scene</div>,
-}));
-
 describe("HomePage", () => {
   it("renders a proof-led hero with a CV CTA and three featured case studies", () => {
     render(<HomePage />);
@@ -64,13 +60,34 @@ describe("HomePage", () => {
     ).toHaveLength(3);
   });
 
-  it("keeps gesture control off the homepage while still linking to the experiment", () => {
+  it("keeps the homepage focused on core portfolio proof only", () => {
     render(<HomePage />);
 
-    expect(screen.getByRole("link", { name: /gesture lab/i })).toHaveAttribute(
-      "href",
-      "/projects/gesture-lab"
-    );
+    const heroSection = screen
+      .getByRole("heading", {
+        level: 1,
+        name: /mid-level full-stack engineer/i,
+      })
+      .closest("section");
+
+    expect(heroSection).toHaveClass("lg:items-start");
+
+    const profileCard = screen
+      .getByRole("heading", {
+        level: 2,
+        name: /dweight dewey fuentes/i,
+      })
+      .closest(".surface-panel");
+
+    expect(profileCard?.parentElement).toHaveClass("lg:pt-6");
+
+    expect(
+      screen.queryByRole("link", { name: /gesture lab/i })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByLabelText(/interactive 3d scene/i)
+    ).not.toBeInTheDocument();
 
     expect(
       screen.queryByRole("button", { name: /scroll mode off/i })

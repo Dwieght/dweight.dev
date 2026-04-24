@@ -23,7 +23,7 @@ export interface Profile {
 
 export interface PortfolioEntry {
   slug: string;
-  kind: "featured" | "archive" | "experiment";
+  kind: "featured" | "archive";
   eyebrow: string;
   title: string;
   summary: string;
@@ -246,40 +246,9 @@ export const archiveProjects = [
   },
 ] satisfies PortfolioEntry[];
 
-export const gestureExperiment = {
-  slug: "gesture-lab",
-  kind: "experiment",
-  eyebrow: "Interaction R&D",
-  title: "Gesture Lab",
-  summary:
-    "A computer-vision experiment exploring desktop scroll and cursor control through camera-based hand tracking.",
-  role: "Prototype design, interaction framing, and implementation",
-  period: "2026",
-  location: "Portfolio experiment",
-  image: undefined,
-  liveUrl: undefined,
-  stack: ["React", "TypeScript", "MediaPipe", "Interaction design"],
-  highlights: [
-    "Reframed as a dedicated experiment instead of being forced into the main portfolio flow.",
-    "Useful as evidence of curiosity and systems thinking, but intentionally opt-in for visitors.",
-  ],
-  context:
-    "Gesture control is memorable, but it creates friction if treated like a default way to use a portfolio. The right move is to show it as an engineering experiment: something worth exploring when a reader wants depth, not something that interrupts a recruiter's first pass.",
-  outcome:
-    "Positioning the gesture demo as an experiment keeps the homepage credible while still giving curious readers a concrete piece of R&D to inspect. It becomes evidence of technical curiosity rather than a gimmick competing with the portfolio's core message.",
-  technicalContribution:
-    "The work combines computer-vision integration, interaction calibration, demo framing, and graceful handling of unsupported or permission-blocked environments. The portfolio now uses it as a case study in technical exploration and product judgment.",
-  supportingNotes: [
-    "Camera access stays opt-in",
-    "Desktop-only demo with explicit expectations",
-    "Best presented as an experiment, not as core navigation",
-  ],
-} satisfies PortfolioEntry;
-
 export const allProjects = [
   ...featuredProjects,
   ...archiveProjects,
-  gestureExperiment,
 ] satisfies PortfolioEntry[];
 
 export const experienceItems = [

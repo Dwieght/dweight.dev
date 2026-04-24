@@ -8,13 +8,11 @@ import { cn } from "@/lib/utils";
 interface FeaturedProjectsProps {
   featuredProjects: PortfolioEntry[];
   archiveProjects: PortfolioEntry[];
-  experiment: PortfolioEntry;
 }
 
 export function FeaturedProjects({
   featuredProjects,
   archiveProjects,
-  experiment,
 }: FeaturedProjectsProps) {
   return (
     <section
@@ -131,7 +129,7 @@ export function FeaturedProjects({
         ))}
       </div>
 
-      <div className="mt-16 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
+      <div className="mt-16">
         <div className="surface-panel p-6">
           <div className="section-intro">
             <p className="eyebrow">Project archive</p>
@@ -177,24 +175,6 @@ export function FeaturedProjects({
             ))}
           </ul>
         </div>
-
-        <aside className="surface-panel p-6">
-          <p className="eyebrow">{experiment.eyebrow}</p>
-          <h3 className="section-title !text-[clamp(1.8rem,3vw,2.4rem)]">
-            {experiment.title}
-          </h3>
-          <p className="mt-3 text-sm leading-7 text-[var(--ink-muted)]">
-            {experiment.summary}
-          </p>
-          <p className="mt-4 text-sm leading-7 text-[var(--ink)]">
-            Camera access stays opt-in, and the demo lives outside the main
-            reading flow on purpose.
-          </p>
-          <Link className="action-button mt-6" href={`/projects/${experiment.slug}`}>
-            Gesture lab
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </aside>
       </div>
     </section>
   );

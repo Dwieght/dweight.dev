@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { GestureScrollController } from "@/components/GestureScrollController";
 import { allProjects, getProjectBySlug } from "@/content/portfolio";
 
 interface ProjectCaseStudyPageProps {
@@ -27,8 +26,6 @@ export default function ProjectCaseStudyPage({
     notFound();
   }
 
-  const isExperiment = project.kind === "experiment";
-
   return (
     <main className="page-shell">
       <div className="mx-auto w-full max-w-[82rem] pt-8">
@@ -40,17 +37,9 @@ export default function ProjectCaseStudyPage({
         <article className="section-frame border-t-0 pt-8">
           <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.36fr)] xl:items-start">
             <div className="space-y-5">
-              <p className="eyebrow">
-                {isExperiment ? "Experimental case study" : project.eyebrow}
-              </p>
+              <p className="eyebrow">{project.eyebrow}</p>
               <h1 className="display-title max-w-[11ch]">{project.title}</h1>
               <p className="lede max-w-[42rem]">{project.summary}</p>
-              {isExperiment ? (
-                <p className="max-w-[40rem] text-sm leading-7 text-[var(--ink)]">
-                  Camera access stays opt-in until you activate the live demo
-                  below.
-                </p>
-              ) : null}
 
               <div className="flex flex-wrap gap-3">
                 <Link className="action-button action-button--primary" href="/cv">
@@ -100,7 +89,7 @@ export default function ProjectCaseStudyPage({
             </aside>
           </div>
 
-          {!isExperiment && project.image ? (
+          {project.image ? (
             <div className="relative mt-10 min-h-[18rem] overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--paper-soft)] sm:min-h-[22rem]">
               <Image
                 src={project.image}
@@ -111,23 +100,6 @@ export default function ProjectCaseStudyPage({
                 priority
               />
             </div>
-          ) : null}
-
-          {isExperiment ? (
-            <section className="surface-panel mt-10 p-6">
-              <p className="eyebrow">Live demo</p>
-              <h2 className="section-title !text-[clamp(1.8rem,3vw,2.4rem)]">
-                Gesture controller demo
-              </h2>
-              <p className="mt-3 max-w-[52ch] text-sm leading-7 text-[var(--ink-muted)]">
-                This page is where the experiment belongs: clearly framed,
-                optional to explore, and never required to understand the main
-                portfolio.
-              </p>
-              <div className="mt-6">
-                <GestureScrollController />
-              </div>
-            </section>
           ) : null}
 
           <div className="mt-10 grid gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">

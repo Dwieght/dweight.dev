@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Download, MapPin } from "lucide-react";
-import { HeroArtifact } from "@/components/portfolio/hero-artifact";
 import type { Profile } from "@/content/portfolio";
 
 interface HomeHeroProps {
@@ -11,7 +10,7 @@ interface HomeHeroProps {
 
 export function HomeHero({ profile }: HomeHeroProps) {
   return (
-    <section className="grid gap-10 pb-12 pt-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.85fr)] lg:items-end lg:pt-16">
+    <section className="grid gap-10 pb-12 pt-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.85fr)] lg:items-start lg:pt-16">
       <div className="space-y-8">
         <div className="space-y-5">
           <p className="eyebrow">{profile.contextLine}</p>
@@ -52,7 +51,7 @@ export function HomeHero({ profile }: HomeHeroProps) {
         </dl>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 lg:pt-6">
         <div className="surface-panel p-5">
           <div className="flex items-center gap-4">
             <div className="relative h-24 w-24 overflow-hidden rounded-[1.6rem] border border-[var(--line)] bg-[var(--paper-soft)]">
@@ -83,14 +82,6 @@ export function HomeHero({ profile }: HomeHeroProps) {
             Quietly warm, technically literate, and built for readers who skim
             first and verify later.
           </p>
-        </div>
-
-        <div className="surface-panel artifact-frame p-4">
-          <div className="flex items-center justify-between pb-3 text-[0.72rem] uppercase tracking-[0.18em] text-[var(--ink-soft)]">
-            <span>Interactive 3D scene</span>
-            <span>drag to inspect</span>
-          </div>
-          <HeroArtifact />
         </div>
       </div>
     </section>

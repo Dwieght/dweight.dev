@@ -12,7 +12,6 @@ import {
   credentialHighlights,
   experienceItems,
   featuredProjects,
-  gestureExperiment,
   profile,
   skillGroups,
 } from "@/content/portfolio";
@@ -55,7 +54,6 @@ export default function HomePage() {
         <FeaturedProjects
           featuredProjects={featuredProjects}
           archiveProjects={archiveProjects}
-          experiment={gestureExperiment}
         />
         <ExperienceTimeline items={experienceItems} />
         <SkillsProfile

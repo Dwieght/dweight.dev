@@ -15,7 +15,7 @@ export default function ProjectsPage() {
         <section className="section-frame border-t-0 pt-8">
           <div className="section-intro">
             <p className="eyebrow">All work</p>
-            <h1 className="display-title max-w-[10ch]">Projects and experiments</h1>
+            <h1 className="display-title max-w-[10ch]">Projects</h1>
             <p className="lede">
               Featured case studies lead. Supporting work stays available for
               readers who want the broader picture.
