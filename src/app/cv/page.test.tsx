@@ -34,7 +34,7 @@ vi.mock("next/image", () => ({
 }));
 
 describe("CVPage", () => {
-  it("presents the shorter CV view without losing print and PDF actions", () => {
+  it("presents the QA-focused CV with print and downloadable PDF actions", () => {
     render(
       <ThemeProvider defaultTheme="light">
         <CVPage />
@@ -42,14 +42,27 @@ describe("CVPage", () => {
     );
 
     expect(
-      screen.getByRole("heading", { level: 1, name: /curriculum vitae/i })
+      screen.getByRole("heading", {
+        level: 1,
+        name: /dweight dewey f\. fuentes/i,
+      })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/mid-level full-stack engineer/i)
+      screen.getByText("Junior QA Developer")
+    ).toBeInTheDocument();
+    expect(screen.getByText(/playwright \(e2e testing\)/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: /professional experience/i,
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/front-end developer \/ qa automation/i)
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /print/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /download pdf/i })
-    ).toBeInTheDocument();
+      screen.getByRole("link", { name: /download cv/i })
+    ).toHaveAttribute("href", "/Dweight_Dewey_Fuentes_CV.pdf");
   });
 });
